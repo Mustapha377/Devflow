@@ -42,3 +42,6 @@ declare module '*.webp' {
   const content: string;
   export default content;
 }
+
+declare module 'tailwindcss-animate';
+declare module '@tailwindcss/typography';
