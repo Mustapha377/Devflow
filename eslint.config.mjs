@@ -1,32 +1,70 @@
-import js from '@eslint/js';
-import prettierConfig from 'eslint-config-prettier';
-import reactPlugin from 'eslint-plugin-react';
-import hooksPlugin from 'eslint-plugin-react-hooks';
-import tseslint from 'typescript-eslint';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-export default [
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
+import { FlatCompat } from "@eslint/eslintrc";
+import js from "@eslint/js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
+});
+
+const config = [
   {
-    plugins: {
-      react: reactPlugin,
-      'react-hooks': hooksPlugin,
-    },
+    ignores: ["components/ui/**/*"],
+  },
+  ...compat.extends(
+    "next/core-web-vitals",
+    "next/typescript",
+    "standard",
+    // "plugin:tailwindcss/recommended",
+    "prettier"
+  ),
+  {
     rules: {
-      ...reactPlugin.configs.recommended.rules,
-      ...hooksPlugin.configs.recommended.rules,
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
-    },
-    settings: {
-      react: {
-        version: 'detect',
-      },
+      "import/order": [
+        "error",
+        {
+          groups: [
+            "builtin",
+            "external",
+            "internal",
+            ["parent", "sibling"],
+            "index",
+            "object",
+          ],
+
+          "newlines-between": "always",
+
+          pathGroups: [
+            {
+              pattern: "@app/**",
+              group: "external",
+              position: "after",
+            },
+          ],
+
+          pathGroupsExcludedImportTypes: ["builtin"],
+
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+        },
+      ],
+      "comma-dangle": "off",
     },
   },
-  prettierConfig,
   {
-    ignores: ['.next/**', 'node_modules/**', 'out/**', 'build/**', 'dist/**'],
+    files: ["**/*.ts", "**/*.tsx"],
+
+    rules: {
+      "no-undef": "off",
+    },
   },
 ];
+
+export default config;
