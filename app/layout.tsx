@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import localfont from "next/font/local";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/toaster";
+import { Providers } from "@/components/providers";
 
 const Inter = localfont({
   src: "./fonts/InterVF.ttf",
@@ -17,31 +19,25 @@ const spacegrotesk = localfont({
 
 export const metadata: Metadata = {
   title: "DevFlow ",
-  description: "A flatform for answering development questions quickly.",
+  description: "A platform for answering development questions quickly.",
   icons: {
     icon: "/images/site-logo.svg",
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${Inter.className} ${spacegrotesk.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <Providers>
           {children}
-        </ThemeProvider>
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
